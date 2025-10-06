@@ -6,32 +6,11 @@ import pandas as pd
 @st.cache_resource
 def load_artifacts():
     model = joblib.load('Logistic Regression.joblib')
+    return model
 
 model = load_artifacts()
 
 
-def preprocess_data(data, feature_list):
-    input_data = {
-        'mean_hold': data['mean_hold'],
-        'std_hold':data['std_hold'], 
-        'mean_latency': data['mean_latency'], 
-        'std_latency': data['std_latency'], 
-        'Age': data['Age'],
-        'mean_flight': data['mean_flight'], 
-        'std_flight': data['std_flight'], 
-        'median_hold': data['median_hold'],
-        'Gender_Male': data['Gender_Male'], 
-        'Gender_Female': data['Gender_Female'], 
-        'Sided_Left': data['Sided_Left'], 
-        'Sided_Right': data['Sided_Right'], 
-        'Impact': data['Impact'], 
-        'keystroke_count': data['keystroke_count']
-    }
-
-    df = pd.Dataframe(input_data)
-    df = df[feature_list]
-    
-    return df
 
 
 def predict(df, model):
@@ -81,22 +60,25 @@ if is_pressed:
     impact_map = {'Mild': 1.0, 'Medium': 2.0, 'Severe': 3.0}
     input_data = {
         'mean_hold': mean_hold,
-        'std_hold': std_hold, 
-        'mean_latency': mean_latency, 
-        'std_latency': std_latency, 
+        'std_hold': std_hold,
+        'mean_latency': mean_latency,
+        'std_latency': std_latency,
         'Age': age,
-        'mean_flight': mean_flight, 
-        'std_flight': std_flight, 
+        'mean_flight': mean_flight,
+        'std_flight': std_flight,
         'median_hold': median_hold,
-        'Gender_Male': 1 if gender == 'Male' else 0, 
-        'Gender_Female': 1 if gender == 'Female' else 0, 
-        'Sided_Left': 1 if sided == 'Left' else 0, 
-        'Sided_Right': 1 if sided == 'Right' else 0, 
-        'Impact': impact_map[impact], 
+        'Gender_Male': 1 if gender == 'Male' else 0,
+        'Sided_Left': 1 if sided == 'Left' else 0,
+        'Impact': impact_map[impact],
         'keystroke_count': keystroke_count
     }
 
-    df = pd.DataFrame(input_data)
+    features_to_use = ['mean_hold', 'std_hold', 'mean_latency', 'std_latency', 'Age',
+                       'mean_flight', 'std_flight', 'median_hold',
+                       'Gender_Male', 'Sided_Left', 'Impact', 'keystroke_count']
+    
+    df = pd.DataFrame([input_data])
+    df = df[features_to_use]
 
     prediction, probability = predict(df, model)
 
